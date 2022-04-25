@@ -25,15 +25,12 @@ char	*get_next_line(int fd)
 	int			i;
 	int			k;
 	
-	container = malloc(1);
-	container[0] = '\0';
-
 	str = (char *) malloc(1);
 	str[0] = '\0';
 
 	// first look at container;
 	i = 0;
-	if (container[i] != '\0')
+	if (container != NULL)
 	{
 		while (container[i] != '\0')
 		{
@@ -68,37 +65,42 @@ char	*get_next_line(int fd)
 	{
 		while (ft_strchr(buff, '\n') == NULL)
 		{
-			buff[bytes_read] = '\0';
 			prev_str = str;
 			str = ft_strjoin(prev_str, buff);
 			free(prev_str);
 			bytes_read = read(fd, buff, BUFFER_SIZE);
+			buff[bytes_read] = '\0';
+			if (bytes_read == 0)
+				return (str);
 			if (bytes_read < BUFFER_SIZE)
 			{
 				buff[bytes_read] = '\0';
-				break ;
-			}
-			if (bytes_read == 0)
+				prev_str = str;
+				str = ft_strjoin(prev_str, buff);
+				free(prev_str);
+				free(buff);
 				return (str);
+			}
+		}
+		i = 0;
+		while (buff[i] != '\0')
+		{
+			if(buff[i++] == '\n')
+			{
+				container = ft_strjoin("", &buff[i]);
+				buff[i] = '\0';
+			}
 		}
 		prev_str = str;
 		str = ft_strjoin(prev_str, buff);
 		free(prev_str);
 		free(buff);
-		if (bytes_read < BUFFER_SIZE)
-			return (str);
 	}
 	else
 	{
 		str = NULL;
 	}
-	
-	// store in container after \n
-	i = 0;
-	while (str[i] != '\n')
-		i++;
-	if (str[i] != '\0')
-		container = ft_strjoin(container, &str[i]);
+
 	printf("container: %s\n", container);
 	return (str);
 }
