@@ -6,7 +6,7 @@
 /*   By: hiyamamo <hiyamamo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 16:37:35 by hiyamamo          #+#    #+#             */
-/*   Updated: 2022/04/26 19:23:20 by hiyamamo         ###   ########.fr       */
+/*   Updated: 2022/04/26 19:38:10 by hiyamamo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ char	*read_from_container(char **container)
 			tmp_container = *container; //TODO have issue for free
 			*container = ft_strdup(&(container[0][k]));
 			free(tmp_container);
-			tmp_container = NULL;
 			return (str);
 		}
 		i++;
 	}
 	str = ft_strdup(*container);
+	*container = NULL; //TODO check this line
 	return (str);
 }
 
@@ -58,8 +58,6 @@ char	*first_read(int fd, char **container)
 {
 	char	*buff;
 	int		bytes_read;
-	
-	printf("*container:%s\n", *container);
 
 	buff = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (buff == NULL)
@@ -72,7 +70,6 @@ char	*first_read(int fd, char **container)
 	if (bytes_read == -1 || bytes_read == 0)
 	{
 		free(buff);
-		printf("---- *container:%s\n", *container);
 		if (*container != NULL)
 			free(*container); //TODO error happen
 		return (NULL);
@@ -169,6 +166,5 @@ char	*get_next_line(int fd)
 		str = read_more(fd, &container, buff, str);
 	else
 		str = make_str_from_first_read(&container, buff);
-	printf("con:%s\n", container);
 	return (str);
 }
