@@ -53,3 +53,24 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	res[k] = '\0';
 	return (res);
 }
+
+char	*ft_strdup(const char *s1)
+{
+	char	*res;
+	int		count;
+
+	count = 0;
+	while (s1[count] != '\0')
+		count++;
+	res = (char *) malloc((count + 1) * sizeof(char));
+	if (res == NULL)
+		return (NULL);
+	count = 0;
+	while (s1[count] != '\0')
+	{
+		res[count] = s1[count];
+		count++;
+	}
+	res[count] = '\0';
+	return (res);
+}
