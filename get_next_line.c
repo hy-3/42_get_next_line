@@ -45,28 +45,18 @@ char	*update_str_and_container(char *split_ptr, char **container, char *str)
 	char	*tmp_container;
 	char	*tmp_buff;
 
-	if (split_ptr != NULL)
+	tmp_buff = ft_strdup(*container);
+	tmp_buff[(split_ptr - *container) + 1] = '\0';
+	str = ft_strdup(tmp_buff);
+	free(tmp_buff);
+	tmp_container = *container;
+	*container = ft_strdup(split_ptr + 1);
+	if (**container == '\0')
 	{
-		tmp_buff = ft_strdup(*container);
-		tmp_buff[(split_ptr - *container) + 1] = '\0';
-		str = ft_strdup(tmp_buff);
-		free(tmp_buff);
-		tmp_container = *container;
-		*container = ft_strdup(split_ptr + 1);
-		if (**container == '\0')
-		{
-			free(*container);
-			*container = NULL;
-		}
-		free(tmp_container);
-		return (str);
-	}
-	if (*container != NULL)
-	{
-		str = ft_strdup(*container);
 		free(*container);
 		*container = NULL;
 	}
+	free(tmp_container);
 	return (str);
 }
 
@@ -81,6 +71,14 @@ char	*get_next_line(int fd)
 		if (read_with_container(fd, &container) == 0)
 			break ;
 	split_ptr = ft_strchr(container, '\n');
-	str = update_str_and_container(split_ptr, &container, str);
+	if (split_ptr != NULL)
+		str = update_str_and_container(split_ptr, &container, str);
+	else
+		if (container != NULL)
+		{
+			str = ft_strdup(container);
+			free(container);
+			container = NULL;
+		}
 	return (str);
 }
