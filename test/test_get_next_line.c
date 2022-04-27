@@ -22,10 +22,10 @@ int	main(void)
 		free(r);
 	}
 
-	// write(1, "-- check with stdin --\n", 23);
-	// r = get_next_line(1);
-	// printf("|%s|\n", r);
-	// free(r);
+	write(1, "-- check with stdin --\n", 23);
+	r = get_next_line(1);
+	printf("|%s|\n", r);
+	free(r);
 	
 	system("leaks a.out");
 	
