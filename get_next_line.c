@@ -44,13 +44,11 @@ char	*update_str_and_container(char *split_ptr, char **container, char *str)
 {
 	char	*tmp_container;
 	char	*tmp_buff;
-	int		size;
 
 	if (split_ptr != NULL)
 	{
 		tmp_buff = ft_strdup(*container);
-		size = split_ptr - *container;
-		tmp_buff[size + 1] = '\0';
+		tmp_buff[(split_ptr - *container) + 1] = '\0';
 		str = ft_strdup(tmp_buff);
 		free(tmp_buff);
 		tmp_container = *container;
@@ -61,15 +59,13 @@ char	*update_str_and_container(char *split_ptr, char **container, char *str)
 			*container = NULL;
 		}
 		free(tmp_container);
+		return (str);
 	}
-	else
+	if (*container != NULL)
 	{
-		if (*container != NULL)
-		{
-			str = ft_strdup(*container);
-			free(*container);
-			*container = NULL;
-		}
+		str = ft_strdup(*container);
+		free(*container);
+		*container = NULL;
 	}
 	return (str);
 }
