@@ -12,159 +12,57 @@
 
 #include "get_next_line.h"
 
-
-
-#include <stdio.h>
-
-
-char	*read_from_container(char **container)
-{
-	char	*str;
-	char	*tmp_container;
-	int		i;
-	int		k;
-
-	i = 0;
-	while (container[0][i] != '\0')
-	{
-		if (container[0][i] == '\n')
-		{
-			str = (char *) malloc((i++ + 2) * sizeof(char));
-			if (str == NULL)
-			{
-				free(container[0]);
-				return (NULL) ;
-			}
-			str[i--] = '\0';
-			k = 0;
-			while (k <= i)
-			{
-				str[k] = container[0][k];
-				k++;
-			}
-			tmp_container = *container; //TODO have issue for free
-			*container = ft_strdup(&(container[0][k]));
-			free(tmp_container);
-			return (str);
-		}
-		i++;
-	}
-	str = ft_strdup(*container);
-	*container = NULL; //TODO check this line
-	return (str);
-}
-
-char	*first_read(int fd, char **container)
-{
-	char	*buff;
-	int		bytes_read;
-
-	buff = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (buff == NULL)
-	{
-		if (*container != NULL)
-			free(*container);
-		return (NULL);
-	}
-	bytes_read = read(fd, buff, BUFFER_SIZE);
-	if (bytes_read == -1 || bytes_read == 0)
-	{
-		free(buff);
-		if (*container != NULL)
-			free(*container); //TODO error happen
-		return (NULL);
-	}
-	buff[bytes_read] = '\0';
-	return (buff);
-}
-
-char	*read_more(int fd, char **container, char *buff, char *str)
-{
-	char	*prev_str;
-	int		bytes_read;
-	int		i;
-
-	while (ft_strchr(buff, '\n') == NULL)
-	{
-		if (str == NULL)
-			str = ft_strdup("");
-		prev_str = str;
-		str = ft_strjoin(prev_str, buff);
-		free(prev_str);
-		bytes_read = read(fd, buff, BUFFER_SIZE);
-		if (bytes_read == -1)
-			return (NULL); // free
-		if (bytes_read == 0)
-		{
-			free(buff);
-			free(*container);
-			*container = NULL;
-			return (str);
-		}
-		buff[bytes_read] = '\0';
-	}
-	i = 0;
-	while (buff[i] != '\0')
-	{
-		if(buff[i++] == '\n')
-		{
-			free(*container);
-			*container = ft_strdup(&buff[i]);
-			buff[i] = '\0';
-		}
-	}
-	prev_str = str;
-	str = ft_strjoin(prev_str, buff);
-	free(prev_str);
-	free(buff);
-	return (str);
-}
-
-char	*make_str_from_first_read(char **container, char *buff)
-{
-	char	*tmp_container;
-	char	*str;
-	int		i;
-
-	tmp_container = *container;
-	i = 0;
-	while (buff[i] != '\0')
-	{
-		if(buff[i++] == '\n')
-		{
-			*container = ft_strdup(&buff[i]);
-			buff[i] = '\0';
-		}
-	}
-	if (tmp_container != NULL)
-	{
-		str = ft_strjoin(tmp_container, buff);
-		free(tmp_container);
-	}
-	else
-		str = ft_strdup(buff);
-	return (str);
-}
-
 char	*get_next_line(int fd)
 {
 	static char	*container;
-	char		*str;
 	char		*buff;
+	char		*split_ptr;
+	char		*tmp_container;
+	char		*tmp_buff;
+	char		*str;
+	int		size;
+	int	bytes_read;
 
 	str = NULL;
-	if (container != NULL)
+	while (ft_strchr(container, '\n') == NULL)
 	{
-		str = read_from_container(&container);
-		if (ft_strchr(str, '\n') != NULL)
-			return (str);
+		buff = (char *) malloc((BUFFER_SIZE + 1) * sizeof(char));
+		bytes_read = read(fd, buff, BUFFER_SIZE);
+		if (bytes_read == -1 || bytes_read == 0) //TODO free when -1
+		{
+			free(buff);
+			break ;
+		}
+		buff[bytes_read] = '\0';
+		if (container == NULL)
+			container = ft_strdup("");
+		tmp_container = container;
+		container = ft_strjoin(container, buff);
+		free(tmp_container);
+		free(buff);
+		if (bytes_read < BUFFER_SIZE)
+			break ;
 	}
-	buff = first_read(fd, &container);
-	if (buff == NULL)
-		return (str);
-	if (ft_strchr(buff, '\n') == NULL)
-		str = read_more(fd, &container, buff, str);
+	split_ptr = ft_strchr(container, '\n');
+	if (split_ptr != NULL)
+	{
+		tmp_buff = ft_strdup(container);
+		size = split_ptr - container;
+		tmp_buff[size + 1] = '\0';
+		str = ft_strdup(tmp_buff);
+		free(tmp_buff);
+		tmp_container = container;
+		container = ft_strdup(split_ptr + 1);
+		free(tmp_container);
+	}
 	else
-		str = make_str_from_first_read(&container, buff);
+	{
+		if (container != NULL)
+		{
+			str = ft_strdup(container);
+			free(container);
+			container = NULL;
+		}
+	}
 	return (str);
 }
