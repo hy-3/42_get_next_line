@@ -27,10 +27,13 @@ int	read_with_container(int fd, char **container)
 	}
 	buff[bytes_read] = '\0';
 	if (*container == NULL)
-		*container = ft_strdup("");
-	tmp_container = *container;
-	*container = ft_strjoin(*container, buff);
-	free(tmp_container);
+		*container = ft_strdup(buff);
+	else
+	{
+		tmp_container = *container;
+		*container = ft_strjoin(*container, buff);
+		free(tmp_container);
+	}
 	free(buff);
 	if (bytes_read < BUFFER_SIZE)
 		return (0);
@@ -52,6 +55,11 @@ char	*update_str_and_container(char *split_ptr, char **container, char *str)
 		free(tmp_buff);
 		tmp_container = *container;
 		*container = ft_strdup(split_ptr + 1);
+		if (**container == '\0')
+		{
+			free(*container);
+			*container = NULL;
+		}
 		free(tmp_container);
 	}
 	else
