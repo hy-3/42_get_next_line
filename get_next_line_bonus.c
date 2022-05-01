@@ -32,12 +32,20 @@ int	fill_container(char **container, char **buff)
 		if (*container == NULL)
 		{
 			free(tmp_container);
+			free(*buff);
 			return (0);
 		}
 		free(tmp_container);
 	}
 	free(*buff);
 	return (1);
+}
+
+char	*free_container(char **container)
+{
+	free(*container);
+	*container = NULL;
+	return (NULL);
 }
 
 int	read_with_container(int fd, char **container)
@@ -50,30 +58,22 @@ int	read_with_container(int fd, char **container)
 	{
 		if (*container != NULL)
 		{
-			free(*container);
-			container = NULL;
+			free_container(container);
 			return (0);
 		}
 	}
 	bytes_read = read(fd, buff, BUFFER_SIZE);
 	if (bytes_read == -1 || bytes_read == 0)
 	{
+		if (bytes_read == -1 && *container != NULL)
+			free_container(container);
 		free(buff);
 		return (0);
 	}
 	buff[bytes_read] = '\0';
-	if (fill_container(container, &buff) == 0)
-		return (0);
-	if (bytes_read < BUFFER_SIZE)
+	if (fill_container(container, &buff) == 0 || bytes_read < BUFFER_SIZE)
 		return (0);
 	return (1);
-}
-
-char	*free_container(char **container)
-{
-	free(*container);
-	*container = NULL;
-	return (NULL);
 }
 
 char	*update_str_and_container(char *split_ptr, char **container, char *str)
@@ -108,8 +108,6 @@ char	*get_next_line(int fd)
 	char		*str;
 
 	str = NULL;
-	if (fd < 0 || fd > OPEN_MAX)
-		return (NULL);
 	while (ft_strchr(container[fd], '\n') == NULL)
 		if (read_with_container(fd, &container[fd]) == 0)
 			break ;
