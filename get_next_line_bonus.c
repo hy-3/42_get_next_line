@@ -106,7 +106,9 @@ char	*get_next_line(int fd)
 	static char	*container[OPEN_MAX];
 	char		*split_ptr;
 	char		*str;
-
+	
+	if (fd < 0 || fd > OPEN_MAX)
+		return (NULL);
 	str = NULL;
 	while (ft_strchr(container[fd], '\n') == NULL)
 		if (read_with_container(fd, &container[fd]) == 0)
