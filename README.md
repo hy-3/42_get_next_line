@@ -11,13 +11,13 @@ You can manage multiple file discriptor at the same time with *_bonus.c files.
 - normal
 ```
 $ gcc -c get_next_line.c -D BUFFER_SIZE=<specify buffer size to read>
-$ gcc -c get_next_line_util.c
-$ gcc <your c file> get_next_line.o get_next_line_util.o
+$ gcc -c get_next_line_utils.c
+$ gcc <your c file(main)> get_next_line.o get_next_line_utils.o
 ```
 
 - bonus
 ```
 $ gcc -c get_next_line_bonus.c -D BUFFER_SIZE=<specify buffer size to read>
-$ gcc -c get_next_line_util_bonus.c
-$ gcc <your c file> get_next_line_bonus.o get_next_line_util_bonus.o
+$ gcc -c get_next_line_utils_bonus.c
+$ gcc <your c file(main)> get_next_line_bonus.o get_next_line_utils_bonus.o
 ```
