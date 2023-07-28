@@ -7,7 +7,7 @@ get_next_line() function will let you read one line at a time from the file desc
 You can manage multiple file discriptors at the same time with *_bonus.c files.
 
 ## Overview
-You can check the subject [here](https://github.com/hy-3/42_get_next_line/blob/main/getnextline.pdf)
+You can check the subject [here](https://github.com/hy-3/42_get_next_line/blob/master/getnextline.pdf)
 
 ## Usage
 You can use get_next_line() function in your program.
